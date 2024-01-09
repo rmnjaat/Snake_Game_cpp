@@ -28,9 +28,9 @@ void initScreen()
     GetConsoleScreenBufferInfo(hconsole, &csbi);
 
     // Extractiong height and width
-    consol_Height = csbi.srWindow.Bottom - csbi.srWindow.Top;
+    consol_Height = csbi.srWindow.Bottom - csbi.srWindow.Top+1;
 
-    consol_width = csbi.srWindow.Right - csbi.srWindow.Left;
+    consol_width = csbi.srWindow.Right - csbi.srWindow.Left+1;
 }
 
 // much Security not needed on Point so declared structure
@@ -42,8 +42,8 @@ struct Point
 
     Point(int x, int y)
     {
-        x = x;
-        y = y;
+        this->x = x;
+        this->y = y;
     }
 };
 
@@ -179,6 +179,14 @@ public:
         food=Point(x,y);
     };
 
+
+    //to Display Score 
+
+    void displayCurr_Score(){
+        gotoxy(consol_width/2,0);
+        cout<<"Current Score : "<<score;
+    }
+
     void gotoxy(int x, int y)
     {
         // moving  to  a point on board
@@ -205,12 +213,15 @@ public:
 
         gotoxy(food.x, food.y);
         cout << FOOD;
+
+
+        displayCurr_Score();
     }
 
     bool update(){
         bool isAlive = snake->move(food);
 
-        if(!isAlive){
+        if(isAlive == false){
             return false;
         }
 
@@ -226,13 +237,13 @@ public:
 
     void getInput(){
         //return true if any key is pressed  kbhit
-        if(kbhit){
+        if(kbhit()){
             int key = getch();
             if(key == 'w' || key == 'W'){
                 snake->changeDir(DIR_UP);
                 
             }
-            else if(key == 's' || key == 's'){
+            else if(key == 's' || key == 'S'){
                 snake->changeDir(DIR_DOWN);
 
             }
@@ -250,7 +261,18 @@ public:
 };
 
 int main()
+
+
 {
+
+
+    cout<<"Enter Player Name : ";
+    string s;
+    getline(cin,s);
+
+    cout<<"\n Press Any key to start.....";
+    cin.ignore();
+
 
     srand(time(0));
 
@@ -261,11 +283,13 @@ int main()
     while(board->update()){
         board->getInput();
         board->draw();
-        Sleep(800);
+        Sleep(80);
 
     }
 
-    cout<<"Game Over ";
+    cout<<" \n  Game Over  \n";
+
+    cout<< "   \n\n\n"<<s<<"'s " <<"final Score is : "<<board->getScore();
 
     return 0;
 }
